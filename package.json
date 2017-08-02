@@ -4,11 +4,14 @@
 	"author" : "Owen Allen <owenallenaz@gmail.com>",
 	"version" : "1.0.0",
 	"devDependencies" : {
-		"mocha" : "*"
+		"mocha" : "*",
+		"async" : "*",
+		"simplebench" : "*"
 	},
 	"engines" : { "node" : ">=6.11.1" },
 	"scripts" : {
-		"test" : "mocha $(find testing/ -name *.test.js) -R spec --colors --check-leaks"
+		"test" : "mocha $(find testing/ -name *.test.js) -R spec --colors --check-leaks",
+		"simplebench" : "simplebench testing/async.benchmark.js --bounce=true --bounceEvery=100 --compare"
 	},
 	"repository" : {
 		"type" : "git",

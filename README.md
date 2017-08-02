@@ -73,6 +73,20 @@ var getPosts = function(cb) {
 1. By using `flow.cbLast(cb)` we return the data from the transform step, again eliminating another set of error checking.
 1. If we add more steps to our series in the future, it's easy and doesn't require a whole refactor of the function. In `async` if you add another step, often you end up moving the final callback into the primary series, and it gets more unwieldy.
 
+# Benchmark
+
+`npm run simplebench`
+
+As of 8/1/2017 on Node 7.10.0, higher ops/sec is better.
+
+```
+Group:  default
+Winner - flow
+
+flow - count: 738300, ops/sec: 738300
+series - count: 178400, ops/sec: 178400, diff: -75.84%
+```
+
 # Documentation
 
 ## flowly.series(calls, cb)
