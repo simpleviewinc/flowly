@@ -9,7 +9,7 @@ var fooP = Promise.resolve(true);
 var barP = Promise.resolve(true);
 var bazP = Promise.resolve(true);
 
-suite.add("flow", function(done) {
+suite.add("new flowly.Flow", function(done) {
 	var flow = new flowly.Flow();
 	return flow.series([
 		foo,
@@ -18,7 +18,7 @@ suite.add("flow", function(done) {
 	], done);
 });
 
-suite.add("series", function(done) {
+suite.add("async.series", function(done) {
 	return async.series([
 		foo,
 		bar,
@@ -26,7 +26,7 @@ suite.add("series", function(done) {
 	], done);
 });
 
-suite.add("callbacks", function(done) {
+suite.add("native callbacks", function(done) {
 	return foo(function(err, result) {
 		if (err) { return done(err); }
 		
@@ -42,6 +42,6 @@ suite.add("callbacks", function(done) {
 	});
 });
 
-suite.add("promises", function(done) {
+suite.add("native promises", function(done) {
 	return fooP.then(barP).then(bazP).then(done);
 });

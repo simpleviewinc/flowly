@@ -81,12 +81,12 @@ As of 8/1/2017 on Node 7.10.0, higher ops/sec is better.
 
 ```
 Group:  default
-Winner - callbacks
+Winner - native callbacks
 
-callbacks - count: 1231314, ops/sec: 1231314
-flow - count: 738365, ops/sec: 738365, diff: -40.03%
-series - count: 169918, ops/sec: 169918, diff: -86.20%
-promises - count: 62558, ops/sec: 62558, diff: -94.92%
+native callbacks - count: 1257784, ops/sec: 1257784
+new flowly.Flow - count: 708483, ops/sec: 708483, diff: -43.67%
+async.series - count: 172942, ops/sec: 172942, diff: -86.25%
+native promises - count: 59974, ops/sec: 59974, diff: -95.23%
 ```
 
 # Documentation
