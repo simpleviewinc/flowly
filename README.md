@@ -81,10 +81,12 @@ As of 8/1/2017 on Node 7.10.0, higher ops/sec is better.
 
 ```
 Group:  default
-Winner - flow
+Winner - callbacks
 
-flow - count: 738300, ops/sec: 738300
-series - count: 178400, ops/sec: 178400, diff: -75.84%
+callbacks - count: 1231314, ops/sec: 1231314
+flow - count: 738365, ops/sec: 738365, diff: -40.03%
+series - count: 169918, ops/sec: 169918, diff: -86.20%
+promises - count: 62558, ops/sec: 62558, diff: -94.92%
 ```
 
 # Documentation
