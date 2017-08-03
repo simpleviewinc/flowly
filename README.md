@@ -6,11 +6,11 @@ High performance async-like flow control library with data retention and short-c
 
 `npm install flowly`
 
-This module is aimed at a simple and high performance variant of `async` and `async.series`. It has a few key enhancements and runs roughly 10x faster than `async`.
+This module is aimed at a simple and high performance variant of `async` and `async.series`. The primary benefits of Flow are the ability to `flow.cbLast()`, access data from previous steps in the current series via `flow.data` and `flow.halt()` to early exit with non-error return data. This allows developers to eliminate a lot of boilerplate error checking and variable stashing.
+
+Another benefit is it runs roughly 4x faster than `async.series`.
 
 # Getting Started
-
-The primary benefits of Flow are the ability to `flow.cbLast()`, access data from previous steps in the current series via `flow.data` and `flow.halt()`. This allows developers to eliminate a lot of boilerplate error checking and variable stashing.
 
 The usage is very similar to `async`. In fact you can quickly replace almost any `async.series` with `flowly.series` and it will work with no regression and an instant speed boost.
 
@@ -30,7 +30,7 @@ flowly.series({
 });
 ```
 
-To see the benefits of `flowly` lets look at a simple `async.series`
+To see the benefits of `flowly` lets look at a simple `async.series` example.
 
 ```js
 var getPosts = function(cb) {
@@ -100,7 +100,7 @@ A shortcut execution of `var flow = new flowly.Flow(); flow.series(calls, cb);`.
 ### Constructor
 
 ```js
-	var flow = new flowly.Flow(options);
+var flow = new flowly.Flow(options);
 ```
 
 * `options` - `object` - `default undefined` - Optional options argument
