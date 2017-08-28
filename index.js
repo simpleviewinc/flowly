@@ -1,3 +1,5 @@
+"use strict";
+
 // umd boilerplate for CommonJS and AMD
 if (typeof exports === 'object' && typeof define !== 'function') {
 	var define = function (factory) {
@@ -15,7 +17,7 @@ define(function(require, exports, module) {
 		self._halted = false;
 		
 		if (self._args.timers === true) {
-			self.timers = { total : 0, results : [] };
+			self.timers = { total : 0, results : {} };
 		}
 	}
 

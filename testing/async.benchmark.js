@@ -1,5 +1,6 @@
 var flowly = require("../index.js");
 var async = require("async");
+var neoasync = require("neo-async");
 
 var foo = function(cb) { return cb(null); };
 var bar = function(cb) { return cb(null); };
@@ -20,6 +21,14 @@ suite.add("new flowly.Flow", function(done) {
 
 suite.add("async.series", function(done) {
 	return async.series([
+		foo,
+		bar,
+		baz
+	], done);
+});
+
+suite.add("neoasync.series", function(done) {
+	return neoasync.series([
 		foo,
 		bar,
 		baz
