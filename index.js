@@ -158,7 +158,33 @@ define(function(require, exports, module) {
 		return flow.series(calls, cb);
 	}
 	
+	var batch = function(args, cb) {
+		var batches = [];
+		while(args.items.length > 0) {
+			batches.push(args.items.splice(0, args.batchSize));
+		}
+		
+		var calls = batches.map(function(val) {
+			return function(cb) {
+				args.fn(val, cb);
+			}
+		});
+		
+		series(calls, function(err, out) {
+			if (err) { return cb(err); }
+			
+			if (args.concat === true) {
+				out = [].concat.apply([], out);
+			} else if (args.merge === true) {
+				out = Object.assign.apply(null, out);
+			}
+			
+			cb(null, out);
+		});
+	}
+	
 	module.exports = {
+		batch : batch,
 		Flow : Flow,
 		series : series
 	}

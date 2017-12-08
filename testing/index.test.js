@@ -414,4 +414,212 @@ describe(__filename, function() {
 			});
 		});
 	});
+	
+	describe("batch", function(done) {
+		var called;
+		
+		beforeEach(function(done) {
+			called = 0;
+			return done();
+		});
+		
+		var batchFn = function(items, cb) {
+			called++
+			return cb(null, items.map(val => `${called}_${val}`));
+		}
+		
+		var tests = [
+			{
+				name : "batch 1",
+				args : {
+					items : [1,2,3],
+					batchSize : 1,
+					concat : true,
+					fn : batchFn
+				},
+				result : [
+					"1_1",
+					"2_2",
+					"3_3"
+				]
+			},
+			{
+				name : "one",
+				args : {
+					items : [1],
+					batchSize : 10,
+					concat : true,
+					fn : batchFn
+				},
+				result : ["1_1"]
+			},
+			{
+				name : "batch multiple",
+				args : {
+					items : [1,2,3,4,5,6,7,8,9,10],
+					batchSize : 3,
+					concat : true,
+					fn : batchFn
+				},
+				result : [
+					"1_1",
+					"1_2",
+					"1_3",
+					"2_4",
+					"2_5",
+					"2_6",
+					"3_7",
+					"3_8",
+					"3_9",
+					"4_10"
+				]
+			},
+			{
+				name : "batch multiple perfect ending",
+				args : {
+					items : [1,2,3,4,5],
+					batchSize : 5,
+					concat : true,
+					fn : batchFn
+				},
+				result : [
+					"1_1",
+					"1_2",
+					"1_3",
+					"1_4",
+					"1_5"
+				]
+			},
+			{
+				name : "error mid-way",
+				args : {
+					items : [1,2,3,4,5],
+					batchSize : 2,
+					concat : true,
+					fn : function(items, cb) {
+						called++;
+						if (called === 2) { return cb(new Error("error mid-way")); }
+						
+						return cb(null, ["valid"]);
+					}
+				},
+				error : /error mid-way/
+			},
+			{
+				name : "array of objs",
+				args : {
+					items : [{ id : 1 }, { id : 2 }, { id : 3 }],
+					batchSize : 2,
+					concat : true,
+					fn : function(items, cb) {
+						called++;
+						
+						return cb(null, items.map(val => `${called}_${val.id}`));
+					}
+				},
+				result : [
+					"1_1",
+					"1_2",
+					"2_3"
+				]
+			},
+			{
+				name : "dropped return",
+				args : {
+					items : [1,2,3,4,5],
+					batchSize : 2,
+					fn : function(items, cb) {
+						return cb(null);
+					}
+				},
+				result : [undefined, undefined, undefined]
+			},
+			{
+				name : "dropped return concat",
+				args : {
+					items : [1,2,3,4,5],
+					batchSize : 2,
+					concat : true,
+					fn : function(items, cb) {
+						return cb(null, []);
+					}
+				},
+				result : []
+			},
+			{
+				name : "non-array return no concat",
+				args : {
+					items : [1,2,3,4,5],
+					batchSize : 2,
+					fn : function(items, cb) {
+						return cb(null, items.reduce((prev, curr) => {
+							prev[curr] = true;
+							return prev;
+						}, {}));
+					}
+				},
+				result : [
+					{ 1 : true, 2 : true },
+					{ 3 : true, 4 : true },
+					{ 5 : true }
+				]
+			},
+			{
+				name : "non-array return merge",
+				args : {
+					items : [1,2,3,4,5],
+					batchSize : 2,
+					merge : true,
+					fn : function(items, cb) {
+						return cb(null, items.reduce((prev, curr) => {
+							prev[curr] = true;
+							return prev;
+						}, {}));
+					}
+				},
+				result : {
+					1 : true,
+					2 : true,
+					3 : true,
+					4 : true,
+					5 : true
+				}
+			},
+			{
+				name : "non-array merge one batch",
+				args : {
+					items : [1,2],
+					batchSize : 10,
+					merge : true,
+					fn : function(items, cb) {
+						return cb(null, items.reduce((prev, curr) => {
+							prev[curr] = true;
+							return prev;
+						}, {}));
+					}
+				},
+				result : {
+					1 : true,
+					2 : true
+				}
+			}
+		]
+		
+		tests.forEach(function(test) {
+			it(test.name, function(done) {
+				asyncLib.batch(test.args, function(err, result) {
+					if (test.error) {
+						assert.ok(err.message.match(test.error));
+						return done();
+					}
+					
+					assert.ifError(err);
+					
+					assert.deepStrictEqual(result, test.result);
+					
+					return done();
+				});
+			});
+		});
+	});
 });

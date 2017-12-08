@@ -96,6 +96,36 @@ native promises - count: 73923, ops/sec: 73923, diff: -94.35%
 
 A shortcut execution of `var flow = new flowly.Flow(); flow.series(calls, cb);`. See the documentation for `Flow.prototype.series` for details.
 
+## flowly.batch(args, cb)
+
+This function can help when you want to split an array up into multiple bulk calls and concat the result. A common example is if you need to make an api call to an external service, but that service only allows you to pass 50 ids at a time. This will allow you to split up any length of ids, burst them out 50 ids at a time and then work with the total result.
+
+* `args` - `object` - `required` - Args
+	* `items` - `array` - `required` - Array of items to batch across, can be an array of any kind of values.
+	* `batchSize` - `number` - `required` - What size batches to break the groups up into.
+	* `concat` - `boolean` - `optional default false` - If each run returns an array, `concat` will combine those into a single array. Cannot be used if each step does not return an array.
+	* `merge` - `boolean` - `optional default false` - If each run returns an object, `merge` will Object.assign() them together into a single object. Cannot be used if each step does not return an object.
+	* `fn` - `function` - `required` - The processor function, it will be called with like `fn(itemsArr, cb)` and the `itemsArr` will be an array of items assigned to that batch. This function should return an array. If you do not care about the return value from the batches, you will want to return [].
+
+```js
+var batch = 0;
+flowly.batch({
+	items : [1,2,3,4,5,6,7,8,9,10],
+	batchSize : 3,
+	fn : function(items, cb) {
+		var myBatch = batch++;
+		return cb(null, items.map(val => `${myBatch}_${val}`));
+	}
+}, function(err, result) {
+	if (err) { throw err; }
+	
+	// result
+	// the fn was called 4 times, and the results of each batch were concatted together
+	// ["1_1", "1_2", "1_3", "2_4", "2_5", "2_6", "3_7", "3_8", "3_9", "4_10"]
+});
+
+```
+
 ## Flow
 
 ### Constructor

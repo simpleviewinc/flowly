@@ -1,22 +1,24 @@
 {
-	"name" : "flowly",
-	"description" : "High performance async-like flow control library with data retention and short-circuiting. Works in browser via require or Node.",
-	"author" : "Owen Allen <owenallenaz@gmail.com>",
-	"version" : "1.0.2",
-	"devDependencies" : {
-		"async" : "*",
-		"neo-async" : "*",
-		"mocha" : "*",
-		"simplebench" : "*"
+	"name": "flowly",
+	"description": "High performance async-like flow control library with data retention and short-circuiting. Works in browser via require or Node.",
+	"author": "Owen Allen <owenallenaz@gmail.com>",
+	"version": "1.1.0",
+	"devDependencies": {
+		"async": "*",
+		"neo-async": "*",
+		"mocha": "*",
+		"simplebench": "*"
 	},
-	"engines" : { "node" : ">=6.11.1" },
-	"scripts" : {
-		"test" : "mocha $(find testing/ -name *.test.js) -R spec --colors --check-leaks",
-		"simplebench" : "simplebench testing/async.benchmark.js --bounce=true --bounceEvery=100 --compare"
+	"engines": {
+		"node": ">=6.11.1"
 	},
-	"repository" : {
-		"type" : "git",
-		"url" : "https://github.com/simpleviewinc/flowly.git"
+	"scripts": {
+		"test": "mocha $(find testing/ -name *.test.js) -R spec --colors --check-leaks",
+		"simplebench": "simplebench testing/async.benchmark.js --bounce=true --bounceEvery=100 --compare"
 	},
-	"license" : "MIT"
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/simpleviewinc/flowly.git"
+	},
+	"license": "MIT"
 }
