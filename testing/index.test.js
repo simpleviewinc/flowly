@@ -379,11 +379,14 @@ describe(__filename, function() {
 						cb(null, "four", "five");
 					}
 				],
-				results : [null, [
-					"one",
-					["two", "three"],
-					["four", "five"]
-				]]
+				results : [
+					null,
+					[
+						"one",
+						["two", "three"],
+						["four", "five"]
+					]
+				]
 			},
 			{
 				name : "array - err",
@@ -401,13 +404,94 @@ describe(__filename, function() {
 				results : [
 					new Error("yes")
 				]
+			},
+			{
+				name : "halt without cb",
+				useFlow : true,
+				calls : [
+					function(cb) {
+						cb(null, "one");
+					},
+					function(cb) {
+						currentTest.flow.halt("two");
+					},
+					function(cb) {
+						throw new Error("Should not get here!");
+					}
+				],
+				results : [
+					null,
+					[
+						"one",
+						"two"
+					]
+				],
+				last : "two"
+			},
+			{
+				name : "multi-arg halt without cb",
+				useFlow : true,
+				calls : [
+					function(cb) {
+						cb(null, "one");
+					},
+					function(cb) {
+						currentTest.flow.halt("two", "three");
+					},
+					function(cb) {
+						throw new Error("Should not get here!");
+					}
+				],
+				results : [
+					null,
+					[
+						"one",
+						["two", "three"]
+					]
+				],
+				last : ["two", "three"]
+			},
+			{
+				name : "halt with nothing",
+				useFlow : true,
+				calls : [
+					function(cb) {
+						cb(null, "one");
+					},
+					function(cb) {
+						currentTest.flow.halt();
+					},
+					function(cb) {
+						throw new Error("Should not get here!");
+					}
+				],
+				results : [
+					null,
+					[
+						"one",
+						undefined
+					]
+				],
+				last : undefined
 			}
 		]
 		
+		var currentTest;
+		
 		tests.forEach(function(test) {
 			it(test.name, function(done) {
-				asyncLib.series(test.calls, function(...args) {
+				currentTest = test;
+				
+				if (test.useFlow) {
+					var flow = test.flow = new asyncLib.Flow();
+				}
+				
+				(test.useFlow ? flow.series.bind(flow) : asyncLib.series)(test.calls, function(...args) {
 					assert.deepStrictEqual(args, test.results);
+					
+					if (test.last !== undefined) {
+						assert.deepStrictEqual(test.last, flow.last);
+					}
 					
 					done();
 				});

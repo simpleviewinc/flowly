@@ -66,19 +66,23 @@ define(function(require, exports, module) {
 	}
 
 	// Stops the series and goes to the final callback, capable of returning data
-	// flow.halt(cb) or flow.halt(arg1, arg2, cb);
+	// flow.halt(cb) or flow.halt(arg1, arg2, cb); or flow.halt(arg1, arg2) or flow.halt()
 	Flow.prototype.halt = function() {
 		var self = this;
 		
+		self._halted = true;
+		
 		// v8 - argumentsToArray one-liner
 		var args = new Array(arguments.length); for(var i = 0; i < arguments.length; i++) { args[i] = arguments[i]; }
-		var cb = args.pop();
 		
-		self._halted = true;
+		if (args[args.length - 1] === self._handler) {
+			// legacy syntax, if the last argument is the cb, then we pop it off so it isn't included in the return data
+			args.pop();
+		}
 		
 		args.unshift(null);
 		
-		return cb.apply(null, args);
+		return self._handler.apply(null, args);
 	}
 
 	// Wraps a callback to cb err or the last item
