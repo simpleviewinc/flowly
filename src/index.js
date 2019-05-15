@@ -35,12 +35,12 @@ define(function(require, exports, module) {
 		if (calls instanceof Array) {
 			self.data = [];
 			for(var i = 0; i < calls.length; i++) {
-				self._callArr.push({ key : i, fn : calls[i] });
+				self._callArr.push({ key : i, fn : calls[i], async : isAsync(calls[i]) });
 			}
 		} else {
 			self.data = {};
 			for(var i in calls) {
-				self._callArr.push({ key : i, fn : calls[i] });
+				self._callArr.push({ key : i, fn : calls[i], async : isAsync(calls[i]) });
 			}
 		}
 		
@@ -116,7 +116,22 @@ define(function(require, exports, module) {
 			self._start = Date.now();
 		}
 		
-		return self._current.fn(self._handler);
+		if (self._current.async === true) {
+			return self._current.fn().then(function() {
+				// can't use spread in this file to maintain legacy browsers, so we have to convert the arguments array to a real array
+				// start it with null to match callback semantics
+				var args = [null];
+				for(var i = 0; i < arguments.length; i++) {
+					args.push(arguments[i]);
+				}
+				
+				self._handler.apply(null, args);
+			}).catch(function(err) {
+				self._handler(err);
+			});
+		} else {
+			return self._current.fn(self._handler);
+		}
 	}
 	
 	// return callback handler which processes the users return values
@@ -185,6 +200,10 @@ define(function(require, exports, module) {
 			
 			cb(null, out);
 		});
+	}
+	
+	function isAsync(fn) {
+		return fn.constructor.name === "AsyncFunction";
 	}
 	
 	module.exports = {

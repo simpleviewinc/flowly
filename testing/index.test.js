@@ -1,6 +1,6 @@
 var assert = require("assert");
 
-var asyncLib = require("../index.js");
+var asyncLib = require("../src/index.js");
 
 describe(__filename, function() {
 	describe("Flow.series array", function() {
@@ -473,6 +473,138 @@ describe(__filename, function() {
 					]
 				],
 				last : undefined
+			},
+			{
+				name : "async function",
+				calls : [
+					async function() {
+						return true;
+					}
+				],
+				results : [
+					null,
+					[
+						true
+					]
+				]
+			},
+			{
+				name : "async mixing with callbacks",
+				calls : [
+					function(cb) {
+						return cb(null, "one");
+					},
+					async function() {
+						return "two";
+					},
+					function(cb) {
+						return cb(null, "three");
+					}
+				],
+				results : [
+					null,
+					[
+						"one",
+						"two",
+						"three"
+					]
+				]
+			},
+			{
+				name : "async handling errors",
+				calls : [
+					async function() {
+						throw new Error("die!");
+					},
+					function(cb) {
+						throw new Error("should not get here!!!");
+					}
+				],
+				results : [
+					new Error("die!")
+				]
+			},
+			{
+				name : "async array return should remain array",
+				calls : [
+					async function() {
+						return ["one", "two"]
+					}
+				],
+				results : [
+					null,
+					[
+						["one", "two"]
+					]
+				]
+			},
+			{
+				name : "async data access intact",
+				useFlow : true,
+				calls : {
+					foo : function(cb) {
+						return cb(null, "fooValue");
+					},
+					bar : async function() {
+						return "barValue";
+					},
+					baz : async function() {
+						assert.strictEqual(currentTest.flow.data.foo, "fooValue");
+						assert.strictEqual(currentTest.flow.data.bar, "barValue");
+					}
+				},
+				results : [
+					null,
+					{
+						foo : "fooValue",
+						bar : "barValue",
+						baz : undefined
+					}
+				]
+			},
+			{
+				name : "async should work with last",
+				useFlow : true,
+				calls : {
+					foo : async function() {
+						return "fooValue";
+					},
+					bar : async function() {
+						return "barValue";
+					}
+				},
+				results : [
+					null,
+					{
+						foo : "fooValue",
+						bar : "barValue"
+					}
+				],
+				last : "barValue"
+			},
+			{
+				name : "async should be able to have an async function that returns a promise",
+				useFlow : true,
+				calls : {
+					foo : async function() {
+						return new Promise(function(resolve) {
+							setImmediate(function() {
+								resolve(true);
+							});
+						});
+					},
+					bar : function(cb) {
+						assert.strictEqual(currentTest.flow.data.foo, true);
+						return cb(null, "barValue");
+					}
+				},
+				results : [
+					null,
+					{
+						foo : true,
+						bar : "barValue"
+					}
+				]
 			}
 		]
 		

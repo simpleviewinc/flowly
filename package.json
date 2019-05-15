@@ -12,9 +12,12 @@
 	"engines": {
 		"node": ">=6.11.1"
 	},
+	"main": "src/index.js",
 	"scripts": {
 		"test": "mocha $(find testing/ -name *.test.js) -R spec --colors --check-leaks",
-		"simplebench": "simplebench testing/async.benchmark.js --bounce=true --bounceEvery=100 --compare"
+		"simplebench": "simplebench testing/async.benchmark.js --bounce=true --bounceEvery=100 --compare",
+		"docker": "./dev/build && ./dev/run || true",
+		"publish": "./dev/publish"
 	},
 	"repository": {
 		"type": "git",
