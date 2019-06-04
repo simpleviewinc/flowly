@@ -10,7 +10,7 @@
 		"simplebench": "*"
 	},
 	"engines": {
-		"node": ">=6.11.1"
+		"node": ">=10.0.0"
 	},
 	"main": "src/index.js",
 	"scripts": {
