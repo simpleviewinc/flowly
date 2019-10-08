@@ -126,7 +126,7 @@ define(function(require, exports, module) {
 				}
 				
 				self._handler.apply(null, args);
-			}).catch(function(err) {
+			}, function(err) {
 				self._handler(err);
 			});
 		} else {

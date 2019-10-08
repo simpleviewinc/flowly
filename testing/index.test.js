@@ -280,6 +280,33 @@ describe(__filename, function() {
 				done();
 			});
 		});
+		
+		// previous iterations were using .catch() on the promise chain
+		// resulting in the catch sticking around, we need to make sure that a throw after the async
+		// isn't caught by the async functions's processing
+		it("should not persist promise catch", function(done) {
+			var called = 0;
+			
+			process.once("unhandledRejection", function(e) {
+				assert.strictEqual(called, 1);
+				assert.strictEqual(e.message, "valid");
+				
+				return done();
+			});
+			
+			var flow = new asyncLib.Flow();
+			flow.series({
+				function(cb) {
+					cb(null, "one")
+				},
+				async function() {
+					return "two";
+				}
+			}, function() {
+				called++;
+				throw new Error("valid");
+			});
+		});
 	});
 	
 	describe("series", function(done) {
