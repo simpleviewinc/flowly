@@ -2,7 +2,7 @@
 	"name": "flowly",
 	"description": "High performance async-like flow control library with data retention and short-circuiting. Works in browser via require or Node.",
 	"author": "Owen Allen <owenallenaz@gmail.com>",
-	"version": "1.3.1",
+	"version": "1.3.2",
 	"devDependencies": {
 		"async": "*",
 		"neo-async": "*",
